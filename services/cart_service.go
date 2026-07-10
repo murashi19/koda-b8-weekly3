@@ -45,16 +45,23 @@ func AddToCart(categoryID int, menuID int) {
 				utils.EnterBack()
 				return
 			}
+			done := make(chan struct{})
+
+			go utils.Loading(done, "Adding to cart...")
 			item.Quantity += qty
 			fmt.Printf(
 				"✔ %s Quantity updated to %d\n",
 				menu.Name,
 				item.Quantity,
 			)
-			time.Sleep(2 * time.Second)
+			time.Sleep(1 * time.Second)
+			close(done)
 			return
 		}
 	}
+	done := make(chan struct{})
+
+	go utils.Loading(done, "Adding to cart...")
 	data.ShopCart.Items = append(
 		data.ShopCart.Items,
 		models.CartItem{
@@ -64,7 +71,11 @@ func AddToCart(categoryID int, menuID int) {
 	)
 	fmt.Println("===================")
 	fmt.Println("✔", menu.Name, "Rp", menu.Price, "x", qty)
-	fmt.Println("Added to Cart")
+
+	time.Sleep(2 * time.Second)
+	close(done)
+
+	fmt.Println("\nSuccessfully added to the cart")
 	time.Sleep(1 * time.Second)
 }
 
@@ -82,17 +93,15 @@ func ViewCart() {
 			return
 		}
 
-		fmt.Printf("%-4s %-20s %5s %10s\n", "No", "Menu", "Qty", "Price")
+		fmt.Printf("%-4s %-22s %-5s %-10s\n", "No", "Menu", "Qty", "Price")
 		fmt.Println("------------------------------------------")
 
 		totalQty := 0
 		totalPrice := 0
-
-		item := &data.ShopCart.Items
-		for i, cart := range *item {
+		for i, cart := range data.ShopCart.Items {
 			subtotal := cart.Quantity * cart.Menu.Price
 			fmt.Printf(
-				"%-4d %-20s %5d %10s\n",
+				"%-4d %-22s %-5d %-10s\n",
 				i+1,
 				cart.Menu.Name,
 				cart.Quantity,
@@ -100,7 +109,7 @@ func ViewCart() {
 			)
 
 			fmt.Printf(
-				"     %-20s %5s %10s\n",
+				"     %-22s %-5s %-10s\n",
 				"Subtotal",
 				"",
 				formatRupiah(subtotal),
@@ -118,12 +127,26 @@ func ViewCart() {
 
 		fmt.Println("==========================================")
 		fmt.Println("")
-		fmt.Println("9. Checkout Now")
+
+		fmt.Println("\n1. Pay Now")
+		fmt.Println("0. Back Menu")
+
 		choose, err := strconv.Atoi(utils.Input("Choose : "))
-		if err != nil || choose != 9 {
+		if err != nil {
 			fmt.Println("Invalid input!")
 			utils.EnterBack()
 			continue
+		}
+		switch choose {
+		case 1:
+			// fungsi checkout
+			utils.ClearScreen()
+			Checkout()
+
+		case 0:
+			return
+		default:
+			fmt.Println("Invalid input!")
 		}
 		utils.EnterBack()
 	}

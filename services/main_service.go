@@ -35,9 +35,14 @@ func ShowMenu() {
 		switch input {
 		case 1:
 			ShowCategory()
+		case 2:
+			// SearchMenu()
 		case 3:
 			utils.ClearScreen()
 			ViewCart()
+		case 4:
+			utils.ClearScreen()
+			Checkout()
 		case 0:
 			return
 
@@ -77,8 +82,8 @@ func ShowCategory() {
 }
 
 func ShowItem(categoryID int) {
-	utils.ClearScreen()
 
+	utils.ClearScreen()
 	var categoryName string
 
 	for _, c := range data.Categories {
