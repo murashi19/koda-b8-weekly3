@@ -72,7 +72,6 @@ func Checkout() {
 		time.Sleep(2 * time.Second)
 		close(done)
 
-		utils.ClearScreen()
 		fmt.Println("\n    ")
 		fmt.Println("==========================================")
 		fmt.Println("✔ Payment Successful!")

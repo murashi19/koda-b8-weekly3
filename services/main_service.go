@@ -26,9 +26,9 @@ func ShowMenu() {
 		fmt.Println("0. Exit")
 		fmt.Println("")
 
-		input, err := strconv.Atoi(utils.Input("Choose: "))
+		input, err := strconv.Atoi(utils.Input("Choose a number: "))
 		if err != nil {
-			fmt.Println("Failed to convert Number")
+			fmt.Println("Invalid selection, please choose a number corresponding to the available menu options")
 			utils.EnterBack()
 			continue
 		}
@@ -36,7 +36,8 @@ func ShowMenu() {
 		case 1:
 			ShowCategory()
 		case 2:
-			// SearchMenu()
+			utils.ClearScreen()
+			SearchMenu()
 		case 3:
 			utils.ClearScreen()
 			ViewCart()
