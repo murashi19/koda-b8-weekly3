@@ -79,7 +79,7 @@ func SearchMenu() {
 			if choose == item.ID {
 				AddToCart(item.CategoryID, item.ID)
 				found = true
-				break
+				return
 			}
 		}
 		if !found {
