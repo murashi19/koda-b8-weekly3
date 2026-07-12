@@ -82,9 +82,10 @@ func AddToCart(categoryID int, menuID int) {
 func ViewCart() {
 
 	for {
-		fmt.Println("==========================================")
+		utils.ClearScreen()
+		fmt.Println("=======================================================")
 		fmt.Printf("%26s\n", "YOUR CART")
-		fmt.Println("==========================================")
+		fmt.Println("=======================================================")
 		fmt.Println()
 
 		if len(data.ShopCart.Items) == 0 {
@@ -93,24 +94,32 @@ func ViewCart() {
 			return
 		}
 
-		fmt.Printf("%-4s %-22s %-5s %-10s\n", "No", "Menu", "Qty", "Price")
-		fmt.Println("------------------------------------------")
+		fmt.Printf("%-4s %-24s %-8s %-5s %-10s\n",
+			"No",
+			"Menu",
+			"Menu ID",
+			"Qty",
+			"Price",
+		)
+		fmt.Println("-------------------------------------------------------")
 
 		totalQty := 0
 		totalPrice := 0
 		for i, cart := range data.ShopCart.Items {
 			subtotal := cart.Quantity * cart.Menu.Price
 			fmt.Printf(
-				"%-4d %-22s %-5d %-10s\n",
+				"%-4d %-24s %-8d %-5d %-10s\n",
 				i+1,
 				cart.Menu.Name,
+				cart.Menu.ID,
 				cart.Quantity,
 				formatRupiah(cart.Menu.Price),
 			)
 
 			fmt.Printf(
-				"     %-22s %-5s %-10s\n",
+				"%-24s %-12s %-6s %-10s\n",
 				"Subtotal",
+				"",
 				"",
 				formatRupiah(subtotal),
 			)
@@ -120,16 +129,18 @@ func ViewCart() {
 			totalQty += cart.Quantity
 			totalPrice += subtotal
 		}
-		fmt.Println("\n------------------------------------------")
+		fmt.Println("\n-------------------------------------------------------")
 		fmt.Printf("Total Item : %d\n", totalQty)
 		fmt.Printf("Total Price : %s\n", formatRupiah(totalPrice))
 		fmt.Println("")
 
-		fmt.Println("==========================================")
+		fmt.Println("=======================================================")
 		fmt.Println("")
 
-		fmt.Println("\n1. Pay Now")
-		fmt.Println("0. Back Menu")
+		fmt.Println("1. Update Quantity")
+		fmt.Println("2. Remove Item")
+		fmt.Println("3. Checkout")
+		fmt.Println("0. Back")
 
 		choose, err := strconv.Atoi(utils.Input("Choose : "))
 		if err != nil {
@@ -139,10 +150,12 @@ func ViewCart() {
 		}
 		switch choose {
 		case 1:
-			// fungsi checkout
+			UpdateItem()
+		case 2:
+
+		case 3:
 			utils.ClearScreen()
 			Checkout()
-
 		case 0:
 			return
 		default:
@@ -153,6 +166,62 @@ func ViewCart() {
 
 }
 
+func UpdateItem() {
+	for {
+		choose, err := strconv.Atoi(utils.Input("Choose Menu ID: "))
+		if err != nil {
+			fmt.Println("Please input a valid number.")
+			continue
+		}
+
+		index := FindCartItemIndex(choose)
+		if index == -1 {
+			fmt.Println("Menu not found in cart.")
+			continue
+		}
+
+		item := &data.ShopCart.Items[index]
+
+		qty, err := strconv.Atoi(utils.Input("Update Quantity to: "))
+		if err != nil {
+			fmt.Println("Please input a valid number.")
+			continue
+		}
+
+		if qty <= 0 {
+			fmt.Println("Quantity must be at least 1.")
+			continue
+		}
+
+		if qty > item.Menu.Stock {
+			fmt.Println("Stock is not enough.")
+			continue
+		}
+
+		item.Quantity = qty
+
+		fmt.Printf("✔ %s quantity updated to %d\n",
+			item.Menu.Name,
+			item.Quantity,
+		)
+
+		time.Sleep(time.Second)
+		return
+	}
+}
+
+func RemoveItem() {
+
+}
+
+func FindCartItemIndex(menuID int) int {
+	for i := range data.ShopCart.Items {
+		if data.ShopCart.Items[i].Menu.ID == menuID {
+			return i
+		}
+	}
+	return -1
+}
 func formatRupiah(n int) string {
 	s := strconv.Itoa(n)
 
