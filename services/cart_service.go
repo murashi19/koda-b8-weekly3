@@ -211,7 +211,32 @@ func UpdateItem() {
 }
 
 func RemoveItem() {
+	for {
+		choose, err := strconv.Atoi(utils.Input("Choose Menu ID: "))
+		if err != nil {
+			fmt.Println("Please input a valid number.")
+			continue
+		}
 
+		index := FindCartItemIndex(choose)
+		if index == -1 {
+			fmt.Println("Menu not found in cart.")
+			continue
+		}
+
+		item := data.ShopCart.Items[index]
+
+		data.ShopCart.Items = append(
+			data.ShopCart.Items[:index],
+			data.ShopCart.Items[index+1:]...,
+		)
+
+		fmt.Printf("✔ %s removed from cart.\n", item.Menu.Name)
+
+		time.Sleep(time.Second)
+
+		return
+	}
 }
 
 func FindCartItemIndex(menuID int) int {
