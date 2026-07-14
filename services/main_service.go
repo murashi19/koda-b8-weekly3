@@ -3,7 +3,7 @@ package services
 import (
 	"fmt"
 	"strconv"
-	"weekly3/data"
+	"weekly3/database"
 	"weekly3/models"
 	"weekly3/utils"
 )
@@ -61,7 +61,7 @@ func ShowCategory() {
 
 		fmt.Println("====== CATEGORY ======")
 
-		for _, c := range data.Categories {
+		for _, c := range database.Categories {
 			fmt.Printf("%d. %s\n", c.ID, c.Name)
 		}
 
@@ -87,7 +87,7 @@ func ShowItem(categoryID int) {
 	utils.ClearScreen()
 	var categoryName string
 
-	for _, c := range data.Categories {
+	for _, c := range database.Categories {
 		if c.ID == categoryID {
 			categoryName = c.Name
 			break
@@ -102,7 +102,7 @@ func ShowItem(categoryID int) {
 
 	fmt.Println("======", categoryName, "======")
 
-	for _, menu := range data.Menus {
+	for _, menu := range database.Menus {
 		if menu.CategoryID == categoryID {
 			fmt.Printf("%d. %s - Rp%d\n",
 				menu.ID,
@@ -130,7 +130,7 @@ func ShowItem(categoryID int) {
 }
 
 func FindMenuByID(id int) models.Menu {
-	for _, menu := range data.Menus {
+	for _, menu := range database.Menus {
 		if menu.ID == id {
 			return menu
 		}

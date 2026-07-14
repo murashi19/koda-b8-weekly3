@@ -5,7 +5,7 @@ import (
 	"strconv"
 	"strings"
 
-	"weekly3/data"
+	"weekly3/database"
 	"weekly3/models"
 	"weekly3/utils"
 )
@@ -26,7 +26,7 @@ func SearchMenu() {
 
 	var results []models.Menu
 
-	for _, menu := range data.Menus {
+	for _, menu := range database.Menus {
 		if strings.Contains(
 			strings.ToLower(menu.Name),
 			keyword,

@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	"weekly3/data"
+	"weekly3/database"
 	"weekly3/utils"
 )
 
 func Checkout() {
 
-	if len(data.ShopCart.Items) == 0 {
+	if len(database.ShopCart.Items) == 0 {
 		fmt.Println("Cart is empty.")
 		utils.EnterBack()
 		return
@@ -25,7 +25,7 @@ func Checkout() {
 
 	totalQty := 0
 	totalPrice := 0
-	for _, item := range data.ShopCart.Items {
+	for _, item := range database.ShopCart.Items {
 		subtotal := item.Quantity * item.Menu.Price
 
 		fmt.Printf(
@@ -79,7 +79,7 @@ func Checkout() {
 		fmt.Printf("%-22s : %s\n", "Change", formatRupiah(change))
 		fmt.Println("==========================================")
 
-		errors := OrderHistory(data.ShopCart.Items, totalQty, totalPrice, payment, change)
+		errors := OrderHistory(database.ShopCart.Items, totalQty, totalPrice, payment, change)
 
 		if errors != nil {
 			fmt.Println("Failed to save order history:", err)
@@ -87,7 +87,7 @@ func Checkout() {
 			return
 		}
 		// Kosongkan cart
-		data.ShopCart.Items = nil
+		database.ShopCart.Items = nil
 
 		time.Sleep(2 * time.Second)
 		return

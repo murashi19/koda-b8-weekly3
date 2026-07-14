@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strconv"
 	"time"
-	"weekly3/data"
+	"weekly3/database"
 	"weekly3/models"
 	"weekly3/utils"
 )
@@ -37,8 +37,8 @@ func AddToCart(categoryID int, menuID int) {
 		utils.EnterBack()
 		return
 	}
-	for i := range data.ShopCart.Items {
-		item := &data.ShopCart.Items[i]
+	for i := range database.ShopCart.Items {
+		item := &database.ShopCart.Items[i]
 		if item.Menu.ID == menu.ID {
 			if item.Quantity+qty > menu.Stock {
 				fmt.Println("Requested quantity exceeds available stock.")
@@ -62,8 +62,8 @@ func AddToCart(categoryID int, menuID int) {
 	done := make(chan struct{})
 
 	go utils.Loading(done, "Adding to cart...")
-	data.ShopCart.Items = append(
-		data.ShopCart.Items,
+	database.ShopCart.Items = append(
+		database.ShopCart.Items,
 		models.CartItem{
 			Menu:     menu,
 			Quantity: qty,
@@ -88,7 +88,7 @@ func ViewCart() {
 		fmt.Println("=======================================================")
 		fmt.Println()
 
-		if len(data.ShopCart.Items) == 0 {
+		if len(database.ShopCart.Items) == 0 {
 			fmt.Println("Your cart is empty")
 			utils.EnterBack()
 			return
@@ -105,7 +105,7 @@ func ViewCart() {
 
 		totalQty := 0
 		totalPrice := 0
-		for i, cart := range data.ShopCart.Items {
+		for i, cart := range database.ShopCart.Items {
 			subtotal := cart.Quantity * cart.Menu.Price
 			fmt.Printf(
 				"%-4d %-24s %-8d %-5d %-10s\n",
@@ -180,7 +180,7 @@ func UpdateItem() {
 			continue
 		}
 
-		item := &data.ShopCart.Items[index]
+		item := &database.ShopCart.Items[index]
 
 		qty, err := strconv.Atoi(utils.Input("Update Quantity to: "))
 		if err != nil {
@@ -224,11 +224,11 @@ func RemoveItem() {
 			continue
 		}
 
-		item := data.ShopCart.Items[index]
+		item := database.ShopCart.Items[index]
 
-		data.ShopCart.Items = append(
-			data.ShopCart.Items[:index],
-			data.ShopCart.Items[index+1:]...,
+		database.ShopCart.Items = append(
+			database.ShopCart.Items[:index],
+			database.ShopCart.Items[index+1:]...,
 		)
 
 		fmt.Printf("✔ %s removed from cart.\n", item.Menu.Name)
@@ -240,8 +240,8 @@ func RemoveItem() {
 }
 
 func FindCartItemIndex(menuID int) int {
-	for i := range data.ShopCart.Items {
-		if data.ShopCart.Items[i].Menu.ID == menuID {
+	for i := range database.ShopCart.Items {
+		if database.ShopCart.Items[i].Menu.ID == menuID {
 			return i
 		}
 	}
